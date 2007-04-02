@@ -33,13 +33,15 @@
 Summary:        Fast Scanner Generator
 Name:           jflex
 Version:        1.3.5
-Release:        2jpp.1%{?dist}
+Release:        2jpp.2%{?dist}
 Epoch:          0
 License:        GPL
 URL:            http://jflex.de/
 Group:          Development/Libraries/Java
 Source0:        http://downloads.sourceforge.net/jflex/jflex-1.3.5.tar.gz
 Patch0:         jflex-Makefile.patch
+Patch1:         jflex-CharSet_java.patch
+Patch2:         jflex-StateSet_java.patch
 BuildRequires:  jpackage-utils >= 0:1.5
 BuildRequires:  make
 BuildRequires:  java-devel
@@ -73,7 +75,8 @@ find . -name "*.class" -exec rm {} \;
 
 %{__sed} -i 's/\r//' COPYRIGHT
 %patch0 -b .sav
-
+%patch1 -b .sav
+%patch2 -b .sav
 %build
 
 pushd src
@@ -116,6 +119,10 @@ rm -rf $RPM_BUILD_ROOT
 # -----------------------------------------------------------------------------
 
 %changelog
+* Mon Apr 02 2007 Matt Wringe <mwringe@redhat.com> - 0:1.3.5-2jpp.2
+- Add patches jflex-CharSet_java.patch and jflex-StateSet_java.patch
+  to allow building with the new gcj
+
 * Mon Feb 12 2007 Matt Wringe <mwringe@redhat.com> - 0:1.3.5-2jpp.1
 - Remove javadoc post and postun sections due to new jpp standard 
 - Update makefile patch to compress jar
