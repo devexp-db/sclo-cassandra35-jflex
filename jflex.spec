@@ -33,7 +33,7 @@
 Summary:        Fast Scanner Generator
 Name:           jflex
 Version:        1.4.1
-Release:        0jpp.1%{?dist}
+Release:        0jpp.2%{?dist}
 Epoch:          0
 License:        GPLv2
 URL:            http://jflex.de/
@@ -44,6 +44,7 @@ BuildRequires:  jpackage-utils >= 0:1.5
 BuildRequires:  ant
 BuildRequires:  junit
 BuildRequires:  java-devel
+BuildRequires:  java_cup
 Requires:       java
 BuildArch:      noarch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -124,6 +125,9 @@ rm -rf $RPM_BUILD_ROOT
 # -----------------------------------------------------------------------------
 
 %changelog
+* Mon Mar 03 2008 Matt Wringe <mwringe@redhat.com> - 0:1.4.1-0jpp.2
+- Add missing buildrequires on java_cup
+
 * Fri Feb 22 2008 Matt Wringe <mwringe@redhat.com> - 0:1.4.1-0jpp.1
 - Patch build file to allow bootstrap building
 
