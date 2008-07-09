@@ -33,7 +33,7 @@
 Summary:        Fast Scanner Generator
 Name:           jflex
 Version:        1.4.1
-Release:        0jpp.2%{?dist}
+Release:        0.3%{?dist}
 Epoch:          0
 License:        GPLv2
 URL:            http://jflex.de/
@@ -125,6 +125,9 @@ rm -rf $RPM_BUILD_ROOT
 # -----------------------------------------------------------------------------
 
 %changelog
+* Wed Jul  9 2008 Tom "spot" Callaway <tcallawa@redhat.com> - 0:1.4.1-0.3
+- drop repotag
+
 * Mon Mar 03 2008 Matt Wringe <mwringe@redhat.com> - 0:1.4.1-0jpp.2
 - Add missing buildrequires on java_cup
 
