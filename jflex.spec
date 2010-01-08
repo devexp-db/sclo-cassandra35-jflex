@@ -32,8 +32,8 @@
 
 Summary:        Fast Scanner Generator
 Name:           jflex
-Version:        1.4.1
-Release:        0.5%{?dist}
+Version:        1.4.3
+Release:        1%{?dist}
 Epoch:          0
 License:        GPLv2
 URL:            http://jflex.de/
@@ -125,6 +125,9 @@ rm -rf $RPM_BUILD_ROOT
 # -----------------------------------------------------------------------------
 
 %changelog
+* Fri Jan 8 2010 Alexander Kurtakov <akurtako@redhat.com> 0:1.4.3-1
+- Update to 1.4.3.
+
 * Fri Jul 24 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0:1.4.1-0.5
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_12_Mass_Rebuild
 
