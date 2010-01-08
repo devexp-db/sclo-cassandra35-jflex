@@ -33,12 +33,13 @@
 Summary:        Fast Scanner Generator
 Name:           jflex
 Version:        1.4.3
-Release:        1%{?dist}
+Release:        2%{?dist}
 Epoch:          0
 License:        GPLv2
 URL:            http://jflex.de/
 Group:          Development/Libraries
 Source0:        http://jflex.de/%{name}-%{version}.tar.gz
+Source1:        http://repo2.maven.org/maven2/de/jflex/jflex/1.4.3/jflex-1.4.3.pom
 Patch0:         jflex-build_xml.patch
 BuildRequires:  jpackage-utils >= 0:1.5
 BuildRequires:  ant
@@ -98,6 +99,13 @@ cp -p lib/JFlex.jar \
   $RPM_BUILD_ROOT%{_javadir}/%{name}-%{version}.jar
 (cd $RPM_BUILD_ROOT%{_javadir} && for jar in *-%{version}.jar; \
    do ln -sf ${jar} `echo $jar| sed "s|-%{version}||g"`; done)
+   
+%add_to_maven_depmap de.jflex jflex %{version} JPP jflex
+
+# poms
+install -d -m 755 %{buildroot}%{_datadir}/maven2/poms
+install -pm 644 %{SOURCE1} \
+    %{buildroot}%{_datadir}/maven2/poms/JPP-%{name}.pom
 
 # javadoc
 mkdir -p $RPM_BUILD_ROOT%{_javadocdir}/%{name}-%{version}
@@ -112,19 +120,29 @@ cp -p COPYRIGHT $RPM_BUILD_ROOT%{_docdir}/%{name}-%{version}
 %clean
 rm -rf $RPM_BUILD_ROOT
 
+%post
+%update_maven_depmap
+
+%postun
+%update_maven_depmap
+
 %files
 %defattr(0644,root,root,0755)
 %doc %{_docdir}/%{name}-%{version}
 %{_javadir}/*.jar
+%{_datadir}/maven2/poms/*
+%{_mavendepmapfragdir}/*
 
 %files javadoc
 %defattr(0644,root,root,0755)
 %doc %{_javadocdir}/%{name}-%{version}
 %doc %{_javadocdir}/%{name}
 
-# -----------------------------------------------------------------------------
 
 %changelog
+* Fri Jan 8 2010 Alexander Kurtakov <akurtako@redhat.com> 0:1.4.3-2
+- Add maven pom and depmaps.
+
 * Fri Jan 8 2010 Alexander Kurtakov <akurtako@redhat.com> 0:1.4.3-1
 - Update to 1.4.3.
 
