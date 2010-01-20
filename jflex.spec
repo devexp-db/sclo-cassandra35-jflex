@@ -33,7 +33,7 @@
 Summary:        Fast Scanner Generator
 Name:           jflex
 Version:        1.4.3
-Release:        2%{?dist}
+Release:        3%{?dist}
 Epoch:          0
 License:        GPLv2
 URL:            http://jflex.de/
@@ -76,6 +76,7 @@ for j in $(find . -name "*.jar"); do mv $j $j.no; done
 find . -name "*.class" -exec rm {} \;
 
 %{__sed} -i 's/\r//' COPYRIGHT
+%{__sed} -i 's|includes="JFlex/\*\*,java_cup/\*\*,skeleton|includes="JFlex/\*\*,skeleton|g' src/build.xml 
 
 %build
 
@@ -99,6 +100,7 @@ cp -p lib/JFlex.jar \
   $RPM_BUILD_ROOT%{_javadir}/%{name}-%{version}.jar
 (cd $RPM_BUILD_ROOT%{_javadir} && for jar in *-%{version}.jar; \
    do ln -sf ${jar} `echo $jar| sed "s|-%{version}||g"`; done)
+(cd $RPM_BUILD_ROOT%{_javadir} && ln -sf jflex.jar JFlex.jar)
    
 %add_to_maven_depmap de.jflex jflex %{version} JPP jflex
 
@@ -140,6 +142,10 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Wed Jan 20 2010 Alexander Kurtakov <akurtako@redhat.com> 0:1.4.3-3
+- Provide JFlex.jar.
+- Don't put java_cup classes in the jar.
+
 * Fri Jan 8 2010 Alexander Kurtakov <akurtako@redhat.com> 0:1.4.3-2
 - Add maven pom and depmaps.
 
