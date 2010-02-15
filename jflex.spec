@@ -47,6 +47,7 @@ BuildRequires:  junit
 BuildRequires:  java-devel
 BuildRequires:  java_cup
 Requires:       java
+Requires:       java_cup
 BuildArch:      noarch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -142,6 +143,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Feb 15 2010 Alexander Kurtakov <akurtako@redhat.com> 0:1.4.3-3
+- Require java_cup.
+
 * Wed Jan 20 2010 Alexander Kurtakov <akurtako@redhat.com> 0:1.4.3-3
 - Provide JFlex.jar.
 - Don't put java_cup classes in the jar.
