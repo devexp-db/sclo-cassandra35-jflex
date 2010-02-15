@@ -5,7 +5,12 @@
   <packaging>jar</packaging>
   <version>1.4.3</version>
   <!-- this is a pseudo POM, to be uploaded manually -->
-  <dependencies />
+  <dependencies>
+  <dependency>
+  <groupId>java_cup</groupId>
+  <artifactId>java_cup</artifactId>
+  </dependency>
+  </dependencies>
   
   <name>JFlex - The Fast Scanner Generator for Java</name>
   <description>JFlex is a lexical analyzer generator (also known as scanner generator) for Java(tm), written in Java(tm). 

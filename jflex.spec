@@ -33,7 +33,7 @@
 Summary:        Fast Scanner Generator
 Name:           jflex
 Version:        1.4.3
-Release:        3%{?dist}
+Release:        4%{?dist}
 Epoch:          0
 License:        GPLv2
 URL:            http://jflex.de/
@@ -143,6 +143,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Feb 15 2010 Alexander Kurtakov <akurtako@redhat.com> 0:1.4.3-4
+- Add dependency on java_cup in the maven pom.xml.
+
 * Mon Feb 15 2010 Alexander Kurtakov <akurtako@redhat.com> 0:1.4.3-3
 - Require java_cup.
 
