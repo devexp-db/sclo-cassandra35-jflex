@@ -33,7 +33,7 @@
 Summary:        Fast Scanner Generator
 Name:           jflex
 Version:        1.4.3
-Release:        4%{?dist}
+Release:        5%{?dist}
 Epoch:          0
 License:        GPLv2
 URL:            http://jflex.de/
@@ -143,6 +143,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Wed Feb 09 2011 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0:1.4.3-5
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_15_Mass_Rebuild
+
 * Mon Feb 15 2010 Alexander Kurtakov <akurtako@redhat.com> 0:1.4.3-4
 - Add dependency on java_cup in the maven pom.xml.
 
