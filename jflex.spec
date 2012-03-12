@@ -28,12 +28,10 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
-%define section free
-
 Summary:        Fast Scanner Generator
 Name:           jflex
 Version:        1.4.3
-Release:        6%{?dist}
+Release:        7%{?dist}
 Epoch:          0
 License:        GPLv2
 URL:            http://jflex.de/
@@ -41,6 +39,8 @@ Group:          Development/Libraries
 Source0:        http://jflex.de/%{name}-%{version}.tar.gz
 Source1:        http://repo2.maven.org/maven2/de/jflex/jflex/1.4.3/jflex-1.4.3.pom
 Patch0:         jflex-build_xml.patch
+Patch1:         jflex-junit-incompatibility.patch
+
 BuildRequires:  jpackage-utils >= 0:1.5
 BuildRequires:  ant
 BuildRequires:  junit
@@ -49,19 +49,18 @@ BuildRequires:  java_cup
 Requires:       java
 Requires:       java_cup
 BuildArch:      noarch
-BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 %description
-JFlex is a lexical analyzer generator (also known as scanner 
-generator) for Java(tm), written in Java(tm). It is also a 
-rewrite of the very useful tool JLex which was developed by 
-Elliot Berk at Princeton University. As Vern Paxson states 
+JFlex is a lexical analyzer generator (also known as scanner
+generator) for Java(tm), written in Java(tm). It is also a
+rewrite of the very useful tool JLex which was developed by
+Elliot Berk at Princeton University. As Vern Paxson states
 for his C/C++ tool flex: They do not share any code though.
-JFlex is designed to work together with the LALR parser 
-generator CUP by Scott Hudson, and the Java modification of 
-Berkeley Yacc BYacc/J by Bob Jamison. It can also be used 
-together with other parser generators like ANTLR or as a 
-standalone tool. 
+JFlex is designed to work together with the LALR parser
+generator CUP by Scott Hudson, and the Java modification of
+Berkeley Yacc BYacc/J by Bob Jamison. It can also be used
+together with other parser generators like ANTLR or as a
+standalone tool.
 
 %package javadoc
 Summary:        Javadoc for %{name}
@@ -73,11 +72,13 @@ Group:          Documentation
 %prep
 %setup -q
 %patch0 -b .sav
+%patch1 -p1 -b .sav
+
 for j in $(find . -name "*.jar"); do mv $j $j.no; done
 find . -name "*.class" -exec rm {} \;
 
 %{__sed} -i 's/\r//' COPYRIGHT
-%{__sed} -i 's|includes="JFlex/\*\*,java_cup/\*\*,skeleton|includes="JFlex/\*\*,skeleton|g' src/build.xml 
+%{__sed} -i 's|includes="JFlex/\*\*,java_cup/\*\*,skeleton|includes="JFlex/\*\*,skeleton|g' src/build.xml
 
 %build
 
@@ -93,56 +94,53 @@ javadoc -sourcepath . -d ../api JFlex
 popd
 
 %install
-rm -rf $RPM_BUILD_ROOT
 
 # jars
-mkdir -p $RPM_BUILD_ROOT%{_javadir}
-cp -p lib/JFlex.jar \
-  $RPM_BUILD_ROOT%{_javadir}/%{name}-%{version}.jar
-(cd $RPM_BUILD_ROOT%{_javadir} && for jar in *-%{version}.jar; \
-   do ln -sf ${jar} `echo $jar| sed "s|-%{version}||g"`; done)
-(cd $RPM_BUILD_ROOT%{_javadir} && ln -sf jflex.jar JFlex.jar)
-   
-%add_to_maven_depmap de.jflex jflex %{version} JPP jflex
+mkdir -p %{buildroot}%{_javadir}
+cp -p lib/JFlex.jar %{buildroot}%{_javadir}/%{name}.jar
+(cd %{buildroot}%{_javadir} && ln -sf %{name}.jar JFlex.jar)
 
 # poms
-install -d -m 755 %{buildroot}%{_datadir}/maven2/poms
-install -pm 644 %{SOURCE1} \
-    %{buildroot}%{_datadir}/maven2/poms/JPP-%{name}.pom
+install -d -m 755 %{buildroot}%{_mavenpomdir}
+install -pm 644 %{SOURCE1} %{buildroot}%{_mavenpomdir}/JPP-%{name}.pom
+
+%add_maven_depmap JPP-%{name}.pom %{name}.jar
 
 # javadoc
-mkdir -p $RPM_BUILD_ROOT%{_javadocdir}/%{name}-%{version}
-cp -pr api/* $RPM_BUILD_ROOT%{_javadocdir}/%{name}-%{version}
-ln -s %{name}-%{version} $RPM_BUILD_ROOT%{_javadocdir}/%{name} 
+mkdir -p %{buildroot}%{_javadocdir}/%{name}
+cp -pr api/* %{buildroot}%{_javadocdir}/%{name}
 
 # docs
-mkdir -p $RPM_BUILD_ROOT%{_docdir}/%{name}-%{version}
-cp -p doc/* $RPM_BUILD_ROOT%{_docdir}/%{name}-%{version}
-cp -p COPYRIGHT $RPM_BUILD_ROOT%{_docdir}/%{name}-%{version}
+mkdir -p %{buildroot}%{_docdir}/%{name}-%{version}
+cp -p doc/* %{buildroot}%{_docdir}/%{name}-%{version}
+cp -p COPYRIGHT %{buildroot}%{_docdir}/%{name}-%{version}
 
-%clean
-rm -rf $RPM_BUILD_ROOT
+# wrapper script for direct execution
+%jpackage_script JFlex.Main "" "" jflex:java_cup jflex true
 
-%post
-%update_maven_depmap
 
-%postun
-%update_maven_depmap
+%pre javadoc
+# workaround for rpm bug, can be removed in F-21
+[ $1 -gt 1 ] && [ -L %{_javadocdir}/%{name} ] && \
+rm -rf $(readlink -f %{_javadocdir}/%{name}) %{_javadocdir}/%{name} || :
 
 %files
-%defattr(0644,root,root,0755)
 %doc %{_docdir}/%{name}-%{version}
-%{_javadir}/*.jar
-%{_datadir}/maven2/poms/*
-%{_mavendepmapfragdir}/*
+%{_javadir}/%{name}.jar
+%{_javadir}/JFlex.jar
+%{_mavenpomdir}/JPP-%{name}.pom
+%{_mavendepmapfragdir}/%{name}
+%{_bindir}/%{name}
 
 %files javadoc
-%defattr(0644,root,root,0755)
-%doc %{_javadocdir}/%{name}-%{version}
 %doc %{_javadocdir}/%{name}
 
 
 %changelog
+* Mon Mar 12 2012 Jaromir Capik <jcapik@redhat.com> - 0:1.4.3-7
+- Wrapper script generated
+- Minor spec file changes according to the latest guidelines
+
 * Fri Jan 13 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0:1.4.3-6
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_17_Mass_Rebuild
 
