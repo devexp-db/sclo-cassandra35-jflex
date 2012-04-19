@@ -31,13 +31,16 @@
 Summary:        Fast Scanner Generator
 Name:           jflex
 Version:        1.4.3
-Release:        7%{?dist}
+Release:        8%{?dist}
 Epoch:          0
 License:        GPLv2
 URL:            http://jflex.de/
 Group:          Development/Libraries
 Source0:        http://jflex.de/%{name}-%{version}.tar.gz
 Source1:        http://repo2.maven.org/maven2/de/jflex/jflex/1.4.3/jflex-1.4.3.pom
+Source2:        %{name}.desktop
+Source3:        %{name}.png
+
 Patch0:         jflex-build_xml.patch
 Patch1:         jflex-junit-incompatibility.patch
 
@@ -46,6 +49,7 @@ BuildRequires:  ant
 BuildRequires:  junit
 BuildRequires:  java-devel
 BuildRequires:  java_cup
+BuildRequires:  desktop-file-utils
 Requires:       java
 Requires:       java_cup
 BuildArch:      noarch
@@ -118,6 +122,9 @@ cp -p COPYRIGHT %{buildroot}%{_docdir}/%{name}-%{version}
 # wrapper script for direct execution
 %jpackage_script JFlex.Main "" "" jflex:java_cup jflex true
 
+# .desktop + icons
+desktop-file-install --dir=%{buildroot}%{_datadir}/applications %{SOURCE2}
+install -Dpm 644 %{SOURCE3} %{buildroot}%{_datadir}/pixmaps/%{name}.png
 
 %pre javadoc
 # workaround for rpm bug, can be removed in F-21
@@ -131,12 +138,18 @@ rm -rf $(readlink -f %{_javadocdir}/%{name}) %{_javadocdir}/%{name} || :
 %{_mavenpomdir}/JPP-%{name}.pom
 %{_mavendepmapfragdir}/%{name}
 %{_bindir}/%{name}
+%{_datadir}/applications/%{name}.desktop
+%{_datadir}/pixmaps/%{name}.png
 
 %files javadoc
 %doc %{_javadocdir}/%{name}
 
 
 %changelog
+* Thu Apr 19 2012 Jaromir Capik <jcapik@redhat.com> - 0:1.4.3-8
+- Desktop file generated
+- Icon created from the GPL licensed logo
+
 * Mon Mar 12 2012 Jaromir Capik <jcapik@redhat.com> - 0:1.4.3-7
 - Wrapper script generated
 - Minor spec file changes according to the latest guidelines
