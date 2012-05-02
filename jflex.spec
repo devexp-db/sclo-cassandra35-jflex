@@ -31,9 +31,9 @@
 Summary:        Fast Scanner Generator
 Name:           jflex
 Version:        1.4.3
-Release:        8%{?dist}
+Release:        9%{?dist}
 Epoch:          0
-License:        GPLv2
+License:        GPL+
 URL:            http://jflex.de/
 Group:          Development/Libraries
 Source0:        http://jflex.de/%{name}-%{version}.tar.gz
@@ -146,6 +146,9 @@ rm -rf $(readlink -f %{_javadocdir}/%{name}) %{_javadocdir}/%{name} || :
 
 
 %changelog
+* Wed May  2 2012 Mikolaj Izdebski <mizdebsk@redhat.com> - 0:1.4.3-9
+- Fix license tag
+
 * Thu Apr 19 2012 Jaromir Capik <jcapik@redhat.com> - 0:1.4.3-8
 - Desktop file generated
 - Icon created from the GPL licensed logo
