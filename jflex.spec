@@ -40,6 +40,7 @@ Source0:        http://jflex.de/%{name}-%{version}.tar.gz
 Source1:        http://repo2.maven.org/maven2/de/jflex/jflex/1.4.3/jflex-1.4.3.pom
 Source2:        %{name}.desktop
 Source3:        %{name}.png
+Source4:        %{name}.1
 
 Patch0:         jflex-build_xml.patch
 Patch1:         jflex-junit-incompatibility.patch
@@ -122,6 +123,10 @@ cp -p COPYRIGHT %{buildroot}%{_docdir}/%{name}-%{version}
 # wrapper script for direct execution
 %jpackage_script JFlex.Main "" "" jflex:java_cup jflex true
 
+# manpage
+install -dm 755 %{buildroot}%{_mandir}/man1
+install -pm 644 %{SOURCE4} %{buildroot}%{_mandir}/man1
+
 # .desktop + icons
 desktop-file-install --dir=%{buildroot}%{_datadir}/applications %{SOURCE2}
 install -Dpm 644 %{SOURCE3} %{buildroot}%{_datadir}/pixmaps/%{name}.png
@@ -138,6 +143,7 @@ rm -rf $(readlink -f %{_javadocdir}/%{name}) %{_javadocdir}/%{name} || :
 %{_mavenpomdir}/JPP-%{name}.pom
 %{_mavendepmapfragdir}/%{name}
 %{_bindir}/%{name}
+%{_mandir}/man1/%{name}.1.gz
 %{_datadir}/applications/%{name}.desktop
 %{_datadir}/pixmaps/%{name}.png
 
@@ -148,6 +154,7 @@ rm -rf $(readlink -f %{_javadocdir}/%{name}) %{_javadocdir}/%{name} || :
 %changelog
 * Wed May  2 2012 Mikolaj Izdebski <mizdebsk@redhat.com> - 0:1.4.3-9
 - Fix license tag
+- Import manpage from Debian's jflex 1.4.1-3 (GPL+)
 
 * Thu Apr 19 2012 Jaromir Capik <jcapik@redhat.com> - 0:1.4.3-8
 - Desktop file generated
