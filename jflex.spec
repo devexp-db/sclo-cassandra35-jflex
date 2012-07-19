@@ -31,7 +31,7 @@
 Summary:        Fast Scanner Generator
 Name:           jflex
 Version:        1.4.3
-Release:        9%{?dist}
+Release:        10%{?dist}
 Epoch:          0
 License:        GPL+
 URL:            http://jflex.de/
@@ -152,6 +152,9 @@ rm -rf $(readlink -f %{_javadocdir}/%{name}) %{_javadocdir}/%{name} || :
 
 
 %changelog
+* Thu Jul 19 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0:1.4.3-10
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_18_Mass_Rebuild
+
 * Wed May  2 2012 Mikolaj Izdebski <mizdebsk@redhat.com> - 0:1.4.3-9
 - Fix license tag
 - Import manpage from Debian's jflex 1.4.1-3 (GPL+)
