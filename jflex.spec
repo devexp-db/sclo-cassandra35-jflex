@@ -31,7 +31,7 @@
 Summary:        Fast Scanner Generator
 Name:           jflex
 Version:        1.4.3
-Release:        10%{?dist}
+Release:        11%{?dist}
 Epoch:          0
 License:        GPL+
 URL:            http://jflex.de/
@@ -79,8 +79,9 @@ Group:          Documentation
 %patch0 -b .sav
 %patch1 -p1 -b .sav
 
-for j in $(find . -name "*.jar"); do mv $j $j.no; done
-find . -name "*.class" -exec rm {} \;
+# Remove bundled stuff
+find -name *.jar -delete
+rm -rf jflex-1.4.3/src/java_cup
 
 %{__sed} -i 's/\r//' COPYRIGHT
 %{__sed} -i 's|includes="JFlex/\*\*,java_cup/\*\*,skeleton|includes="JFlex/\*\*,skeleton|g' src/build.xml
@@ -152,6 +153,10 @@ rm -rf $(readlink -f %{_javadocdir}/%{name}) %{_javadocdir}/%{name} || :
 
 
 %changelog
+* Thu Nov 22 2012 Mikolaj Izdebski <mizdebsk@redhat.com> - 0:1.4.3-11
+- Remove bundled java_cup sources
+- Resolves: rhbz#877051
+
 * Thu Jul 19 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0:1.4.3-10
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_18_Mass_Rebuild
 
