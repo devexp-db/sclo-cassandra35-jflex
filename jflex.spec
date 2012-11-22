@@ -31,7 +31,7 @@
 Summary:        Fast Scanner Generator
 Name:           jflex
 Version:        1.4.3
-Release:        11%{?dist}
+Release:        12%{?dist}
 Epoch:          0
 License:        GPL+
 URL:            http://jflex.de/
@@ -47,10 +47,12 @@ Patch1:         jflex-junit-incompatibility.patch
 
 BuildRequires:  jpackage-utils >= 0:1.5
 BuildRequires:  ant
+BuildRequires:  emacs
 BuildRequires:  junit
 BuildRequires:  java-devel
 BuildRequires:  java_cup
 BuildRequires:  desktop-file-utils
+Requires:       emacs-filesystem >= %{_emacs_version}
 Requires:       java
 Requires:       java_cup
 BuildArch:      noarch
@@ -99,6 +101,9 @@ CLASSPATH=%{_javadir}/junit.jar:%{_javadir}/java_cup.jar:../lib/JFlex.jar ant ge
 javadoc -sourcepath . -d ../api JFlex
 popd
 
+# Compile Emacs jflex-mode source
+%{_emacs_bytecompile} lib/jflex-mode.el
+
 %install
 
 # jars
@@ -132,6 +137,11 @@ install -pm 644 %{SOURCE4} %{buildroot}%{_mandir}/man1
 desktop-file-install --dir=%{buildroot}%{_datadir}/applications %{SOURCE2}
 install -Dpm 644 %{SOURCE3} %{buildroot}%{_datadir}/pixmaps/%{name}.png
 
+# Emacs files
+install -d -m 755 %{buildroot}%{_emacs_sitelispdir}/%{name}
+install -p -m 644 lib/jflex-mode.el %{buildroot}%{_emacs_sitelispdir}/%{name}
+install -p -m 644 lib/jflex-mode.elc %{buildroot}%{_emacs_sitelispdir}/%{name}
+
 %pre javadoc
 # workaround for rpm bug, can be removed in F-21
 [ $1 -gt 1 ] && [ -L %{_javadocdir}/%{name} ] && \
@@ -147,12 +157,16 @@ rm -rf $(readlink -f %{_javadocdir}/%{name}) %{_javadocdir}/%{name} || :
 %{_mandir}/man1/%{name}.1.gz
 %{_datadir}/applications/%{name}.desktop
 %{_datadir}/pixmaps/%{name}.png
+%{_emacs_sitelispdir}/%{name}
 
 %files javadoc
 %doc %{_javadocdir}/%{name}
 
 
 %changelog
+* Thu Nov 22 2012 Mikolaj Izdebski <mizdebsk@redhat.com> - 0:1.4.3-12
+- Install Emacs jflex-mode
+
 * Thu Nov 22 2012 Mikolaj Izdebski <mizdebsk@redhat.com> - 0:1.4.3-11
 - Remove bundled java_cup sources
 - Resolves: rhbz#877051
