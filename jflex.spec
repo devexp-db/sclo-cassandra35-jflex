@@ -31,12 +31,13 @@
 Summary:        Fast Scanner Generator
 Name:           jflex
 Version:        1.4.3
-Release:        13%{?dist}
+Release:        14%{?dist}
 Epoch:          0
 License:        GPL+
 URL:            http://jflex.de/
 Group:          Development/Libraries
-Source0:        http://jflex.de/%{name}-%{version}.tar.gz
+# ./clean-tarball.sh
+Source0:        %{name}-%{version}-clean.tar.gz
 Source1:        http://repo2.maven.org/maven2/de/jflex/jflex/1.4.3/jflex-1.4.3.pom
 Source2:        %{name}.desktop
 Source3:        %{name}.png
@@ -81,10 +82,6 @@ Group:          Documentation
 %patch0 -b .sav
 %patch1 -p1 -b .sav
 
-# Remove bundled stuff
-find -name *.jar -delete
-rm -rf jflex-1.4.3/src/java_cup
-
 %{__sed} -i 's/\r//' COPYRIGHT
 %{__sed} -i 's|includes="JFlex/\*\*,java_cup/\*\*,skeleton|includes="JFlex/\*\*,skeleton|g' src/build.xml
 
@@ -98,7 +95,9 @@ CLASSPATH=%{_javadir}/junit.jar:%{_javadir}/java_cup.jar ant jar-bootstrap
 # removing the generated files and rebuilding using the JFlex.jar
 CLASSPATH=%{_javadir}/junit.jar:%{_javadir}/java_cup.jar:../lib/JFlex.jar ant genclean libclean jar
 
-javadoc -sourcepath . -d ../api JFlex
+# clean tarball doesn't contain java_cup sources thus javadoc generation
+# will return 1 (missing symbols)
+javadoc -sourcepath . -d ../api JFlex || :
 popd
 
 # Compile Emacs jflex-mode source
@@ -160,10 +159,15 @@ rm -rf $(readlink -f %{_javadocdir}/%{name}) %{_javadocdir}/%{name} || :
 %{_emacs_sitelispdir}/%{name}
 
 %files javadoc
+%doc COPYRIGHT
 %doc %{_javadocdir}/%{name}
 
 
 %changelog
+* Thu Jun 20 2013 Michal Srb <msrb@redhat.com> - 0:1.4.3-14
+- Build from clean tarball
+- Install license file with javadoc package
+
 * Thu Feb 14 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0:1.4.3-13
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_19_Mass_Rebuild
 
