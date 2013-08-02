@@ -3,16 +3,17 @@
 Summary:        Fast Scanner Generator
 Name:           jflex
 Version:        1.4.3
-Release:        15%{?dist}
+Release:        16%{?dist}
 Epoch:          0
 License:        GPL+
 URL:            http://jflex.de/
-# ./clean-tarball.sh
+# ./create-tarball.sh %%{version}
 Source0:        %{name}-%{version}-clean.tar.gz
 Source1:        http://repo2.maven.org/maven2/de/jflex/jflex/1.4.3/jflex-1.4.3.pom
 Source2:        %{name}.desktop
 Source3:        %{name}.png
 Source4:        %{name}.1
+Source5:        create-tarball.sh
 
 Patch0:         jflex-build_xml.patch
 Patch1:         jflex-junit-incompatibility.patch
@@ -133,6 +134,9 @@ rm -rf $(readlink -f %{_javadocdir}/%{name}) %{_javadocdir}/%{name} || :
 
 
 %changelog
+* Fri Aug 02 2013 Michal Srb <msrb@redhat.com> - 0:1.4.3-16
+- Add create-tarball.sh script to SRPM
+
 * Thu Jun 20 2013 Mikolaj Izdebski <mizdebsk@redhat.com> - 0:1.4.3-15
 - Fix javadoc generation
 - Update to current packaging guidelines
