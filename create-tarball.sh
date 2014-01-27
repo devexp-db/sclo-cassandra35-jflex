@@ -14,7 +14,7 @@ tar xvf ${NAME}-${VERSION}.tar.gz
 (
   cd ${NAME}-${VERSION}
   find . -name "*.jar" -delete
-  rm -Rf src/java_cup/ examples/
+  rm -Rf src/main/java/java_cup/ examples/
 )
 
 tar czvf ${NAME}-${VERSION}-clean.tar.gz ${NAME}-${VERSION}
