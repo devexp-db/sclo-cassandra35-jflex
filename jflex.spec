@@ -13,7 +13,7 @@ Source3:        %{name}.png
 Source4:        %{name}.1
 Source5:        create-tarball.sh
 
-BuildRequires:  jpackage-utils >= 0:1.5
+BuildRequires:  maven-local
 BuildRequires:  ant
 BuildRequires:  emacs
 BuildRequires:  jflex
@@ -94,6 +94,7 @@ install -p -m 644 lib/jflex-mode.elc %{buildroot}%{_emacs_sitelispdir}/%{name}
 %changelog
 * Mon Jan 27 2014 Mikolaj Izdebski <mizdebsk@redhat.com> - 0:1.5.0-1
 - Update to upstream version 1.5.0
+- Build with Maven
 
 * Fri Aug 02 2013 Michal Srb <msrb@redhat.com> - 0:1.4.3-16
 - Add create-tarball.sh script to SRPM
