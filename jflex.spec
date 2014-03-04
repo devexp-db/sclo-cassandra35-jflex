@@ -1,7 +1,7 @@
 Summary:        Fast Scanner Generator
 Name:           jflex
 Version:        1.5.0
-Release:        2%{?dist}
+Release:        3%{?dist}
 License:        BSD
 URL:            http://jflex.de/
 BuildArch:      noarch
@@ -92,6 +92,9 @@ install -p -m 644 lib/jflex-mode.elc %{buildroot}%{_emacs_sitelispdir}/%{name}
 
 
 %changelog
+* Tue Mar 04 2014 Stanislav Ochotnicky <sochotnicky@redhat.com> - 1.5.0-3
+- Use Requires: java-headless rebuild (#1067528)
+
 * Tue Jan 28 2014 Mikolaj Izdebski <mizdebsk@redhat.com> - 1.5.0-2
 - Fix license tag
 
