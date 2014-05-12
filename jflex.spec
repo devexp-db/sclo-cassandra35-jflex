@@ -1,7 +1,7 @@
 Summary:        Fast Scanner Generator
 Name:           jflex
-Version:        1.5.0
-Release:        3%{?dist}
+Version:        1.5.1
+Release:        1%{?dist}
 License:        BSD
 URL:            http://jflex.de/
 BuildArch:      noarch
@@ -46,7 +46,7 @@ This package provides %{summary}.
 %pom_add_dep java_cup:java_cup
 
 %pom_remove_plugin :maven-antrun-plugin
-%pom_remove_plugin :maven-jflex-plugin
+%pom_remove_plugin :jflex-maven-plugin
 
 %build
 java -jar /usr/share/java/java_cup.jar -parser LexParse -interface -destdir src/main/java src/main/cup/LexParse.cup
@@ -92,6 +92,9 @@ install -p -m 644 lib/jflex-mode.elc %{buildroot}%{_emacs_sitelispdir}/%{name}
 
 
 %changelog
+* Mon May 12 2014 Mikolaj Izdebski <mizdebsk@redhat.com> - 1.5.1-1
+- Update to upstream version 1.5.1
+
 * Tue Mar 04 2014 Stanislav Ochotnicky <sochotnicky@redhat.com> - 1.5.0-3
 - Use Requires: java-headless rebuild (#1067528)
 
