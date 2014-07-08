@@ -1,7 +1,7 @@
 Summary:        Fast Scanner Generator
 Name:           jflex
-Version:        1.5.1
-Release:        2%{?dist}
+Version:        1.6.0
+Release:        1%{?dist}
 License:        BSD
 URL:            http://jflex.de/
 BuildArch:      noarch
@@ -92,6 +92,9 @@ install -p -m 644 lib/jflex-mode.elc %{buildroot}%{_emacs_sitelispdir}/%{name}
 
 
 %changelog
+* Tue Jul  8 2014 Mikolaj Izdebski <mizdebsk@redhat.com> - 1.6.0-1
+- Update to upstream version 1.6.0
+
 * Sun Jun 08 2014 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 1.5.1-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_21_Mass_Rebuild
 
