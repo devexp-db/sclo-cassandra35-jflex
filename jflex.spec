@@ -48,6 +48,10 @@ This package provides %{summary}.
 %pom_remove_plugin :maven-antrun-plugin
 %pom_remove_plugin :jflex-maven-plugin
 
+# Tests fail with 320k stacks (default on i686), so lets increase
+# stack to 1M.  See rhbz#1119308
+%pom_xpath_inject "pom:plugin[pom:artifactId='maven-surefire-plugin']/pom:configuration" "<argLine>-Xss1024k</argLine>"
+
 %build
 java -jar /usr/share/java/java_cup.jar -parser LexParse -interface -destdir src/main/java src/main/cup/LexParse.cup
 jflex -d src/main/java/jflex --skel src/main/jflex/skeleton.nested src/main/jflex/LexScan.flex
