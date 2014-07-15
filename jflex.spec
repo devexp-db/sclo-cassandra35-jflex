@@ -49,8 +49,8 @@ This package provides %{summary}.
 %pom_remove_plugin :jflex-maven-plugin
 
 # Tests fail with 320k stacks (default on i686), so lets increase
-# stack to 1M.  See rhbz#1119308
-%pom_xpath_inject "pom:plugin[pom:artifactId='maven-surefire-plugin']/pom:configuration" "<argLine>-Xss1024k</argLine>"
+# stack to 16M to avoid stack overflows.  See rhbz#1119308
+%pom_xpath_inject "pom:plugin[pom:artifactId='maven-surefire-plugin']/pom:configuration" "<argLine>-Xss16384k</argLine>"
 
 %build
 java -jar /usr/share/java/java_cup.jar -parser LexParse -interface -destdir src/main/java src/main/cup/LexParse.cup
