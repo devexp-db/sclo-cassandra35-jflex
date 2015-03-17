@@ -1,6 +1,6 @@
 Summary:        Fast Scanner Generator
 Name:           jflex
-Version:        1.6.0
+Version:        1.6.1
 Release:        1%{?dist}
 License:        BSD
 URL:            http://jflex.de/
@@ -96,6 +96,9 @@ install -p -m 644 lib/jflex-mode.elc %{buildroot}%{_emacs_sitelispdir}/%{name}
 
 
 %changelog
+* Tue Mar 17 2015 Mikolaj Izdebski <mizdebsk@redhat.com> - 1.6.1-1
+- Update to upstream version 1.6.1
+
 * Tue Jul  8 2014 Mikolaj Izdebski <mizdebsk@redhat.com> - 1.6.0-1
 - Update to upstream version 1.6.0
 
