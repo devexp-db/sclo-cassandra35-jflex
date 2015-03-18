@@ -1,0 +1,86 @@
+--- jflex-1.6.1/src/main/jflex/skeleton.nested	2015-03-15 01:50:30.000000000 +0100
++++ jflex-1.6.0/src/main/jflex/skeleton.nested	2014-06-02 11:03:10.000000000 +0200
+@@ -15,7 +15,7 @@
+ 
+   /* error messages for the codes above */
+   private static final String ZZ_ERROR_MSG[] = {
+-    "Unknown internal scanner error",
++    "Unkown internal scanner error",
+     "Error: could not match input",
+     "Error: pushback value was too large"
+   };
+@@ -162,29 +162,28 @@
+     }
+ 
+     /* fill the buffer with new input */
+-    int requested = zzBuffer.length - zzEndRead;
+-    int numRead = zzReader.read(zzBuffer, zzEndRead, requested);
+-
+-    /* not supposed to occur according to specification of java.io.Reader */
+-    if (numRead == 0) {
+-      throw new java.io.IOException("Reader returned 0 characters. See JFlex examples for workaround.");
++    int requested = zzBuffer.length - zzEndRead;           
++    int totalRead = 0;
++    while (totalRead < requested) {
++      int numRead = zzReader.read(zzBuffer, zzEndRead + totalRead, requested - totalRead);
++      if (numRead == -1) {
++        break;
++      }
++      totalRead += numRead;
+     }
+-    if (numRead > 0) {
+-      zzEndRead += numRead;
+-      /* If numRead == requested, we might have requested to few chars to
+-         encode a full Unicode character. We assume that a Reader would
+-         otherwise never return half characters. */
+-      if (numRead == requested) {      
++
++    if (totalRead > 0) {
++      zzEndRead += totalRead;
++      if (totalRead == requested) { /* possibly more input available */
+         if (Character.isHighSurrogate(zzBuffer[zzEndRead - 1])) {
+           --zzEndRead;
+           zzFinalHighSurrogate = 1;
+         }
+       }
+-      /* potentially more input available */
+       return false;
+     }
+ 
+-    /* numRead < 0 ==> end of stream */
++    // totalRead = 0: End of stream
+     return true;
+   }
+ 
+@@ -207,7 +206,7 @@
+    * char, and column counting remain untouched.
+    *
+    * The current input stream can be restored with
+-   * yypopStream (usually in an <<EOF>> action).
++   * yypopstream (usually in an <<EOF>> action).
+    *
+    * @param reader the new input stream to read from
+    *
+@@ -438,15 +437,15 @@
+       zzMarkedPos = zzMarkedPosL;
+ --- char count update
+ 
+-      if (zzInput == YYEOF && zzStartRead == zzCurrentPos) {
+-        zzAtEOF = true;
+---- eofvalue
+-      }
+-      else {
+ --- actions
+-          default:
++        default: 
++          if (zzInput == YYEOF && zzStartRead == zzCurrentPos) {
++            zzAtEOF = true;
++--- eofvalue
++          } 
++          else {
+ --- no match
+-        }
++          }
+       }
+     }
+   }
