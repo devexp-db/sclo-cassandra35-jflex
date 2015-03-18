@@ -1,7 +1,7 @@
 Summary:        Fast Scanner Generator
 Name:           jflex
 Version:        1.6.1
-Release:        0.1.bootstrap%{?dist}
+Release:        1%{?dist}
 License:        BSD
 URL:            http://jflex.de/
 BuildArch:      noarch
@@ -12,8 +12,6 @@ Source2:        %{name}.desktop
 Source3:        %{name}.png
 Source4:        %{name}.1
 Source5:        create-tarball.sh
-
-Patch0:         jflex-skeleton.patch
 
 BuildRequires:  maven-local
 BuildRequires:  ant
@@ -44,7 +42,6 @@ This package provides %{summary}.
 
 %prep
 %setup -q
-%patch0 -p1
 %mvn_file : %{name}
 %pom_add_dep java_cup:java_cup
 
@@ -99,9 +96,6 @@ install -p -m 644 lib/jflex-mode.elc %{buildroot}%{_emacs_sitelispdir}/%{name}
 
 
 %changelog
-* Wed Mar 18 2015 Mikolaj Izdebski <mizdebsk@redhat.com> - 1.6.1-0.1.bootstrap
-- Bootstrap build
-
 * Tue Mar 17 2015 Mikolaj Izdebski <mizdebsk@redhat.com> - 1.6.1-1
 - Update to upstream version 1.6.1
 
