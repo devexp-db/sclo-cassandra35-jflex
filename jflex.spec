@@ -1,7 +1,10 @@
+%bcond_without desktop
+%bcond_without emacs
+
 Summary:        Fast Scanner Generator
 Name:           jflex
 Version:        1.6.1
-Release:        5%{?dist}
+Release:        6%{?dist}
 License:        BSD
 URL:            http://jflex.de/
 BuildArch:      noarch
@@ -15,14 +18,18 @@ Source5:        create-tarball.sh
 
 BuildRequires:  maven-local
 BuildRequires:  ant
-BuildRequires:  emacs
 BuildRequires:  jflex
 BuildRequires:  junit
 BuildRequires:  sonatype-oss-parent
 BuildRequires:  java-devel
 BuildRequires:  java_cup
+%if %{with desktop}
 BuildRequires:  desktop-file-utils
+%endif
+%if %{with emacs}
+BuildRequires:  emacs
 Requires:       emacs-filesystem >= %{_emacs_version}
+%endif
 
 %description
 JFlex is a lexical analyzer generator (also known as scanner
@@ -58,38 +65,47 @@ java -jar /usr/share/java/java_cup.jar -parser LexParse -interface -destdir src/
 jflex -d src/main/java/jflex --skel src/main/jflex/skeleton.nested src/main/jflex/LexScan.flex
 %mvn_build
 
+%if %{with emacs}
 # Compile Emacs jflex-mode source
 %{_emacs_bytecompile} lib/jflex-mode.el
+%endif
 
 %install
 %mvn_install
-
-install -d -m 755 %{buildroot}%{_mandir}/man1
-install -d -m 755 %{buildroot}%{_emacs_sitelispdir}/%{name}
-install -d -m 755 %{buildroot}%{_datadir}/pixmaps
 
 # wrapper script for direct execution
 %jpackage_script jflex.Main "" "" jflex:java_cup jflex true
 
 # manpage
+install -d -m 755 %{buildroot}%{_mandir}/man1
 install -p -m 644 %{SOURCE4} %{buildroot}%{_mandir}/man1
 
 # .desktop + icons
+%if %{with desktop}
 desktop-file-install --dir=%{buildroot}%{_datadir}/applications %{SOURCE2}
+install -d -m 755 %{buildroot}%{_datadir}/pixmaps
 install -p -m 644 %{SOURCE3} %{buildroot}%{_datadir}/pixmaps/%{name}.png
+%endif
 
 # Emacs files
+%if %{with emacs}
+install -d -m 755 %{buildroot}%{_emacs_sitelispdir}/%{name}
 install -p -m 644 lib/jflex-mode.el %{buildroot}%{_emacs_sitelispdir}/%{name}
 install -p -m 644 lib/jflex-mode.elc %{buildroot}%{_emacs_sitelispdir}/%{name}
+%endif
 
 %files -f .mfiles
 %doc doc
 %doc COPYRIGHT
 %{_bindir}/%{name}
 %{_mandir}/man1/%{name}.1.gz
+%if %{with desktop}
 %{_datadir}/applications/%{name}.desktop
 %{_datadir}/pixmaps/%{name}.png
+%endif
+%if %{with emacs}
 %{_emacs_sitelispdir}/%{name}
+%endif
 
 %files javadoc
 %doc COPYRIGHT
@@ -97,6 +113,9 @@ install -p -m 644 lib/jflex-mode.elc %{buildroot}%{_emacs_sitelispdir}/%{name}
 
 
 %changelog
+* Tue Mar  7 2017 Mikolaj Izdebski <mizdebsk@redhat.com> - 1.6.1-6
+- Add bconds for desktop and emacs
+
 * Fri Feb 10 2017 Fedora Release Engineering <releng@fedoraproject.org> - 1.6.1-5
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_26_Mass_Rebuild
 
