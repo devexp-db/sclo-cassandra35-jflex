@@ -1,35 +1,37 @@
-%bcond_without desktop
-%bcond_without emacs
+%{?scl:%scl_package jflex}
+%{!?scl:%global pkg_name %{name}}
 
-Summary:        Fast Scanner Generator
-Name:           jflex
-Version:        1.6.1
-Release:        6%{?dist}
-License:        BSD
-URL:            http://jflex.de/
-BuildArch:      noarch
+%{!?_with_bootstrap: %global bootstrap 1}
+
+Name:		%{?scl_prefix}jflex
+Summary:	Fast Scanner Generator
+Version:	1.6.1
+Release:	7%{?dist}
+License:	BSD
+URL:		http://jflex.de/
+BuildArch:	noarch
 
 # ./create-tarball.sh %%{version}
-Source0:        %{name}-%{version}-clean.tar.gz
-Source2:        %{name}.desktop
-Source3:        %{name}.png
-Source4:        %{name}.1
-Source5:        create-tarball.sh
+Source0:	%{pkg_name}-%{version}-clean.tar.gz
+Source1:	%{pkg_name}.1
+Source2:	create-tarball.sh
+%if 0%{?bootstrap}
+Source3:	skeleton.nested
 
-BuildRequires:  maven-local
-BuildRequires:  ant
-BuildRequires:  jflex
-BuildRequires:  junit
-BuildRequires:  sonatype-oss-parent
-BuildRequires:  java-devel
-BuildRequires:  java_cup
-%if %{with desktop}
-BuildRequires:  desktop-file-utils
+Patch0:		%{pkg_name}-%{version}-bootstrap.patch
 %endif
-%if %{with emacs}
-BuildRequires:  emacs
-Requires:       emacs-filesystem >= %{_emacs_version}
+
+BuildRequires:	%{?scl_prefix_maven}maven-local
+BuildRequires:	%{?scl_prefix_java_common}ant
+BuildRequires:	%{?scl_prefix_java_common}junit
+BuildRequires:	%{?scl_prefix_maven}sonatype-oss-parent
+BuildRequires:	%{?scl_prefix_java_common}java_cup
+%if 0%{?bootstrap}
+BuildRequires:	%{?scl_prefix_maven}jflex
+%else
+BuildRequires:	%{?scl_prefix}jflex
 %endif
+%{?scl:Requires: %scl_runtime}
 
 %description
 JFlex is a lexical analyzer generator (also known as scanner
@@ -49,8 +51,15 @@ Summary:        API documentation for %{name}
 This package provides %{summary}.
 
 %prep
-%setup -q
-%mvn_file : %{name}
+%setup -q -n %{pkg_name}-%{version}
+
+%if 0%{?bootstrap}
+%patch0 -p1
+cp %{SOURCE3} .
+%endif
+
+%{?scl:scl enable %{scl_maven} %{scl} - << "EOF"}
+%mvn_file : %{pkg_name}
 %pom_add_dep java_cup:java_cup
 
 %pom_remove_plugin :maven-antrun-plugin
@@ -59,60 +68,46 @@ This package provides %{summary}.
 # Tests fail with 320k stacks (default on i686), so lets increase
 # stack to 16M to avoid stack overflows.  See rhbz#1119308
 %pom_xpath_inject "pom:plugin[pom:artifactId='maven-surefire-plugin']/pom:configuration" "<argLine>-Xss16384k</argLine>"
+%{?scl:EOF}
 
 %build
-java -jar /usr/share/java/java_cup.jar -parser LexParse -interface -destdir src/main/java src/main/cup/LexParse.cup
-jflex -d src/main/java/jflex --skel src/main/jflex/skeleton.nested src/main/jflex/LexScan.flex
-%mvn_build
-
-%if %{with emacs}
-# Compile Emacs jflex-mode source
-%{_emacs_bytecompile} lib/jflex-mode.el
+%{?scl:scl enable %{scl_maven} %{scl} - << "EOF"}
+set -e -x
+java -jar $(build-classpath java_cup) -parser LexParse -interface -destdir src/main/java src/main/cup/LexParse.cup
+%if 0%{?bootstrap}
+java -cp $(build-classpath jflex java_cup) JFlex.Main -d src/main/java/jflex --skel skeleton.nested src/main/jflex/LexScan.flex
+%else
+java -cp $(build-classpath jflex java_cup) jflex.Main -d src/main/java/jflex --skel src/main/jflex/skeleton.nested src/main/jflex/LexScan.flex
 %endif
+%mvn_build
+%{?scl:EOF}
 
 %install
+%{?scl:scl enable %{scl_maven} %{scl} - << "EOF"}
 %mvn_install
+%{?scl:EOF}
 
 # wrapper script for direct execution
 %jpackage_script jflex.Main "" "" jflex:java_cup jflex true
 
 # manpage
 install -d -m 755 %{buildroot}%{_mandir}/man1
-install -p -m 644 %{SOURCE4} %{buildroot}%{_mandir}/man1
-
-# .desktop + icons
-%if %{with desktop}
-desktop-file-install --dir=%{buildroot}%{_datadir}/applications %{SOURCE2}
-install -d -m 755 %{buildroot}%{_datadir}/pixmaps
-install -p -m 644 %{SOURCE3} %{buildroot}%{_datadir}/pixmaps/%{name}.png
-%endif
-
-# Emacs files
-%if %{with emacs}
-install -d -m 755 %{buildroot}%{_emacs_sitelispdir}/%{name}
-install -p -m 644 lib/jflex-mode.el %{buildroot}%{_emacs_sitelispdir}/%{name}
-install -p -m 644 lib/jflex-mode.elc %{buildroot}%{_emacs_sitelispdir}/%{name}
-%endif
+install -p -m 644 %{SOURCE1} %{buildroot}%{_mandir}/man1
 
 %files -f .mfiles
 %doc doc
 %doc COPYRIGHT
-%{_bindir}/%{name}
-%{_mandir}/man1/%{name}.1.gz
-%if %{with desktop}
-%{_datadir}/applications/%{name}.desktop
-%{_datadir}/pixmaps/%{name}.png
-%endif
-%if %{with emacs}
-%{_emacs_sitelispdir}/%{name}
-%endif
+%{_bindir}/%{pkg_name}
+%{_mandir}/man1/%{pkg_name}.1.gz
 
 %files javadoc
 %doc COPYRIGHT
-%doc %{_javadocdir}/%{name}
-
+%doc %{_javadocdir}/%{pkg_name}
 
 %changelog
+* Mon Apr 10 2017 Tomas Repik <trepik@redhat.com> - 1.6.1-7
+- scl conversion
+
 * Tue Mar  7 2017 Mikolaj Izdebski <mizdebsk@redhat.com> - 1.6.1-6
 - Add bconds for desktop and emacs
 

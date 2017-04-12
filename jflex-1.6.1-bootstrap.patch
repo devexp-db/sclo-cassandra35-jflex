@@ -1,0 +1,25 @@
+From 2541643109a40d0bba8f4ffaeb0650737d140efb Mon Sep 17 00:00:00 2001
+From: Tomas Repik <trepik@redhat.com>
+Date: Tue, 11 Apr 2017 13:07:07 +0200
+Subject: [PATCH] remove unknown option
+
+---
+ src/main/jflex/LexScan.flex | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/src/main/jflex/LexScan.flex b/src/main/jflex/LexScan.flex
+index cf47bb8..7861172 100644
+--- a/src/main/jflex/LexScan.flex
++++ b/src/main/jflex/LexScan.flex
+@@ -40,8 +40,6 @@ import jflex.unicode.UnicodeProperties;
+ %state CTOR_ARG, REGEXP_CODEPOINT_SEQUENCE
+ %state STRING_CODEPOINT_SEQUENCE, CHARCLASS_CODEPOINT
+ 
+-%inputstreamctor false
+-
+ %cupdebug
+ 
+ %{
+-- 
+2.9.3
+
